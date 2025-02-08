@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader2, Lock, Unlock, Eye, EyeOff, Info } from 'lucide-react'
 import Image from 'next/image'
-import { useInitData } from '@telegram-apps/sdk-react'
 import {
   checkPasswordExists,
   login,
@@ -15,7 +14,7 @@ import {
   clearAuthenticationTimestamp
 } from '@/utils/auth'
 import { toast } from 'sonner'
-
+import { useWallet } from '@/contexts/WalletContext'
 interface AuthProps {
   children: React.ReactNode
 }
@@ -28,21 +27,14 @@ export default function Auth({ children }: AuthProps) {
   const [error, setError] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [hasPassword, setHasPassword] = useState(false)
-
-  const initData = useInitData()
-
-  const currentUser = React.useMemo(() => {
-    if (!initData?.user) return undefined
-    const { id, username, firstName, lastName } = initData.user
-    return { id: id.toString(), username, name: `${firstName} ${lastName}` }
-  }, [initData])
+  const { walletSolana } = useWallet()
 
   useEffect(() => {
-    if (currentUser) {
-      checkPasswordExists(currentUser.id)
+    if (walletSolana) {
+      checkPasswordExists(walletSolana.publicKey)
         .then((exists) => {
           setHasPassword(exists)
-          if (!exists || checkAuthenticationValidity(currentUser.id)) {
+          if (!exists || checkAuthenticationValidity(walletSolana.publicKey)) {
             setIsAuthenticated(true)
           }
         })
@@ -51,15 +43,22 @@ export default function Auth({ children }: AuthProps) {
           setIsAuthenticated(true)
         })
     }
-  }, [currentUser])
+  }, [walletSolana])
 
   const handleAuth = async (password: string) => {
-    if (!currentUser) return
+    if (!walletSolana) return
 
     setIsLoading(true)
     try {
       if (hasPassword) {
-        const success = await login(currentUser, password)
+        const success = await login(
+          {
+            id: walletSolana.publicKey,
+            username: walletSolana.publicKey,
+            name: walletSolana.publicKey
+          },
+          password
+        )
         if (success) {
           toast.success('Login successful.')
           setIsAuthenticated(true)
@@ -67,7 +66,14 @@ export default function Auth({ children }: AuthProps) {
           setError('Login failed. Please try again.')
         }
       } else {
-        const success = await createPassword(currentUser, password)
+        const success = await createPassword(
+          {
+            id: walletSolana.publicKey,
+            username: walletSolana.publicKey,
+            name: walletSolana.publicKey
+          },
+          password
+        )
         if (success) {
           setHasPassword(true)
           setIsAuthenticated(true)

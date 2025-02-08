@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@/contexts/WalletContext'
-import { useInitData } from '@telegram-apps/sdk-react'
 import { checkPasswordExists } from '@/utils/auth'
 
 const settingsOptions = [
@@ -50,20 +49,13 @@ const SettingsPage = () => {
   const [hasPassword, setHasPassword] = useState(false)
   const router = useRouter()
   const { walletSolana } = useWallet()
-  const initData = useInitData()
-
-  const currentUser = useMemo(() => {
-    if (!initData?.user) return undefined
-    const { id } = initData.user
-    return { id: id.toString() }
-  }, [initData])
 
   // Check if user has password
   useEffect(() => {
-    if (currentUser) {
-      checkPasswordExists(currentUser.id).then(setHasPassword)
+    if (walletSolana) {
+      checkPasswordExists(walletSolana.publicKey).then(setHasPassword)
     }
-  }, [currentUser])
+  }, [walletSolana])
 
   const handleOptionClick = (option: (typeof settingsOptions)[0]) => {
     setSelectedOption(option.id)

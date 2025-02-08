@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { Wallet } from '@/utils/wallet'
-import { useInitData } from '@telegram-apps/sdk-react'
 
 interface WalletContextType {
   walletSolana: Wallet | null
@@ -15,8 +14,6 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined)
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   let userId: string | null = null
   try {
-    const initData = useInitData()
-    userId = initData?.user?.id.toString() || null
   } catch (error) {
     console.warn('Telegram SDK not available, wallet will use default storage')
   }

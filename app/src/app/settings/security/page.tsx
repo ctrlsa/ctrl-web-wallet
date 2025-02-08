@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Eye, EyeOff, Lock, Unlock, Shield, Download, Trash2 } from 'lucide-react'
-import { useInitData } from '@telegram-apps/sdk-react'
 import { checkPasswordExists, createPassword, login, removePassword } from '@/utils/auth'
 import { motion } from 'framer-motion'
 import WalletDetails from '@/components/WalletDetails'
@@ -38,13 +37,6 @@ export default function SecurityPage() {
   const [mnemonicBackedUp, setMnemonicBackedUp] = useState(false)
   const [hasMnemonicPhrase, setHasMnemonicPhrase] = useState(false)
 
-  const initData = useInitData()
-  const currentUser = useMemo(() => {
-    if (!initData?.user) return undefined
-    const { id, username, firstName, lastName } = initData.user
-    return { id: id.toString(), username, name: `${firstName} ${lastName}` }
-  }, [initData])
-
   useEffect(() => {
     if (userId) {
       checkPasswordExists(userId).then(setHasPassword)
@@ -61,7 +53,7 @@ export default function SecurityPage() {
 
   const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!currentUser) return
+    if (!walletSolana) return
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -70,7 +62,14 @@ export default function SecurityPage() {
 
     setIsLoading(true)
     try {
-      const success = await createPassword(currentUser, password)
+      const success = await createPassword(
+        {
+          id: walletSolana.publicKey,
+          username: walletSolana.publicKey,
+          name: walletSolana.publicKey
+        },
+        password
+      )
       if (success) {
         setHasPassword(true)
         toast.success('Password set successfully')
@@ -88,17 +87,28 @@ export default function SecurityPage() {
 
   const handleRemovePassword = async (e?: React.MouseEvent) => {
     e?.preventDefault()
-    if (!currentUser) return
+    if (!walletSolana) return
 
     setIsLoading(true)
     try {
-      const isValid = await login(currentUser, verificationPassword)
+      const isValid = await login(
+        {
+          id: walletSolana.publicKey,
+          username: walletSolana.publicKey,
+          name: walletSolana.publicKey
+        },
+        verificationPassword
+      )
       if (!isValid) {
         setVerificationError('Incorrect password')
         setIsLoading(false)
         return
       }
-      const success = await removePassword(currentUser)
+      const success = await removePassword({
+        id: walletSolana.publicKey,
+        username: walletSolana.publicKey,
+        name: walletSolana.publicKey
+      })
       if (success) {
         setHasPassword(false)
         toast.success('Password protection removed')
@@ -236,7 +246,7 @@ export default function SecurityPage() {
             <h3 className="text-lg font-medium mb-4">Wallet Backup</h3>
             <div className="space-y-4">
               <WalletDetails
-                user={currentUser}
+                user={walletSolana}
                 wallet={walletSolana}
                 onWalletDelete={() => setWalletSolana(null)}
               />

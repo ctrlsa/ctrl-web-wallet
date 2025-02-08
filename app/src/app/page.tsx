@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { postEvent, useInitData, useViewport } from '@telegram-apps/sdk-react'
 import { Copy, Loader2, QrCode, Share2 } from 'lucide-react'
 import { initUtils } from '@telegram-apps/sdk'
 
@@ -26,8 +25,6 @@ const truncateAddress = (address: string) => {
 }
 
 export default function Home() {
-  const initData = useInitData()
-  const viewport = useViewport()
   const { setWalletSolana } = useWallet()
   const utils = initUtils()
 
@@ -42,66 +39,15 @@ export default function Home() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false)
   const [selectedQrCode, setSelectedQrCode] = useState<any | null>(null)
 
-  const currentUser = useMemo(() => {
-    if (!initData?.user) return undefined
-    const { id, username, firstName, lastName } = initData.user
-    return { id: id.toString(), username, name: `${firstName} ${lastName}` }
-  }, [initData])
-
   useEffect(() => {
-    if (!walletSolana && currentUser) {
+    if (!walletSolana) {
       const mnemonic = createMnemonic()
       const newWallet = generateWalletFromMnemonic('501', mnemonic, 0)
       if (newWallet) {
         setWalletSolana(newWallet)
       }
     }
-  }, [walletSolana, currentUser, setWalletSolana])
-
-  useEffect(() => {
-    postEvent('web_app_setup_back_button', {
-      is_visible: true
-    })
-    postEvent('web_app_setup_swipe_behavior', {
-      allow_vertical_swipe: false
-    })
-  }, [])
-
-  useEffect(() => {
-    const vp = viewport
-    if (!vp?.isExpanded) {
-      vp?.expand()
-    }
-  }, [viewport])
-
-  const getContacts = useCallback(
-    async (isRefreshAction = false) => {
-      try {
-        isRefreshAction ? setIsRefreshing(true) : setIsFetchingContacts(true)
-
-        if (currentUser?.id) {
-          const res = await contactsApi.getContacts(currentUser.id, initData)
-          setContacts(res)
-
-          if (isRefreshAction) {
-            console.log('Contacts updated successfully')
-          }
-        }
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setIsFetchingContacts(false)
-        setIsRefreshing(false)
-      }
-    },
-    [currentUser?.id, initData]
-  )
-
-  useEffect(() => {
-    if (currentUser) {
-      getContacts()
-    }
-  }, [currentUser, getContacts])
+  }, [walletSolana, setWalletSolana])
 
   const handleRedeem = async (secret: string, sender: string, token: string) => {
     console.log(secret, sender, token)
@@ -135,16 +81,6 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    if (!initData) return
-    if (initData?.startParam) {
-      const [secret, sender, token] = initData?.startParam?.split('_')
-      if (secret && sender && token) {
-        handleRedeem(secret, sender, token)
-      }
-    }
-  }, [])
-
   const copyToClipboard = (text: string) => {
     try {
       navigator.clipboard.writeText(text)
@@ -173,19 +109,6 @@ export default function Home() {
     } catch (err) {
       console.error(err)
     }
-  }
-
-  const handleShare = (publicKey: string) => {
-    let link
-    if (process.env.NODE_ENV === 'development') {
-      link = `https://t.me/InstantSendTestBot/InstantSendLocalTest`
-    } else {
-      link = `https://t.me/InstantSendAppBot/InstantSendApp`
-    }
-
-    const message = `Solana address of @${currentUser?.username}:\n\n\`${publicKey}\``
-
-    utils.shareURL(link, message)
   }
 
   return (
@@ -228,7 +151,6 @@ export default function Home() {
                     className="rounded-full bg-current-800"
                     onClick={(e) => {
                       e.stopPropagation()
-                      handleShare(walletSolana.publicKey)
                     }}
                   >
                     <Share2 className="h-5 w-5" />
