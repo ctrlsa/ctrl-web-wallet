@@ -5,14 +5,12 @@ import { Root } from '@/components/Root/Root'
 import Navbar from '@/components/NavBar'
 import Auth from '@/components/Auth'
 
-import '@telegram-apps/telegram-ui/dist/styles.css'
 import 'normalize.css/normalize.css'
 import './_assets/globals.css'
 import { ThemeProvider } from '@/components/themeprovider'
 import { Toaster } from '@/components/ui/sonner'
 import { WalletProvider } from '@/contexts/WalletContext'
 import { CSPostHogProvider } from '@/contexts/PostHogProvider'
-import { EventProvider } from '@/contexts/EventProvider'
 import BottomNav from '@/components/BottomNav'
 import {
   AlertCircleIcon,
@@ -53,9 +51,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                 />
                 <Navbar />
                 <Auth>
-                  <main className="">
-                    <EventProvider>{children}</EventProvider>
-                  </main>
+                  <main className="">{children}</main>
                 </Auth>
                 <BottomNav />
               </WalletProvider>

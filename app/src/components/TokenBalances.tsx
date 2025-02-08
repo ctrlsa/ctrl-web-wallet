@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, RefreshCcw, Send, X, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { initUtils } from '@telegram-apps/sdk'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -42,7 +41,6 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
   const [selectedToken, setSelectedToken] = useState<TokenWithPrice | null>(
     defaultToken ? (tokenList.find((token) => token.symbol === defaultToken) ?? null) : null
   )
-  const utils = initUtils()
 
   const [sendAmount, setSendAmount] = useState<string>('0.05')
   const [priceLoaded, setPriceLoaded] = useState(false)
@@ -326,12 +324,6 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
                         <Button
                           className="w-full py-6 text-lg font-semibold bg-gradient-to-r shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-400/20"
                           variant="default"
-                          onClick={() => {
-                            const link = getRedeemLink()
-                            if (link) {
-                              utils.shareURL(link)
-                            }
-                          }}
                         >
                           <Send className="h-6 w-6 mr-3" />
                           Forward via Telegram

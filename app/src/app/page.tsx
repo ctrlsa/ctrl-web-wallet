@@ -3,7 +3,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Copy, Loader2, QrCode, Share2 } from 'lucide-react'
-import { initUtils } from '@telegram-apps/sdk'
 
 import { toast } from 'sonner'
 import QRCode from 'qrcode'
@@ -26,7 +25,6 @@ const truncateAddress = (address: string) => {
 
 export default function Home() {
   const { setWalletSolana } = useWallet()
-  const utils = initUtils()
 
   const connection = new Connection('https://api.devnet.solana.com')
 
