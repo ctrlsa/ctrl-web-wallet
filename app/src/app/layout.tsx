@@ -21,12 +21,9 @@ import {
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
-const InstallPWA = dynamic(
-  () => import('@/components/InstallPWA/InstallPWA').then((mod) => mod.InstallPWA),
-  {
-    ssr: false
-  }
-)
+const InstallPWA = dynamic(() => import('@/components/InstallPWA').then((mod) => mod.InstallPWA), {
+  ssr: false
+})
 
 export const metadata: Metadata = {
   title: 'Instant Send App by CTRL',
