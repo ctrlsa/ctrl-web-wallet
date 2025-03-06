@@ -50,6 +50,7 @@
     "grammy": "^1.30.0",
     "lucide-react": "^0.446.0",
     "next": "14.2.4",
+    "next-pwa": "^5.6.0",
     "next-themes": "^0.3.0",
     "normalize.css": "^8.0.1",
     "posthog-js": "^1.190.2",

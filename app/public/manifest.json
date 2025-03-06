@@ -1,0 +1,17 @@
+{
+  "name": "Instant Send App by CTRL",
+  "short_name": "CTRL Wallet",
+  "description": "Instant Send App by CTRL",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/apple-touch-icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
