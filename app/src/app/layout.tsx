@@ -19,6 +19,14 @@ import {
   InfoIcon,
   Loader2Icon
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const InstallPWA = dynamic(
+  () => import('@/components/InstallPWA/InstallPWA').then((mod) => mod.InstallPWA),
+  {
+    ssr: false
+  }
+)
 
 export const metadata: Metadata = {
   title: 'Instant Send App by CTRL',
@@ -72,6 +80,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                 <Auth>
                   <main className="">{children}</main>
                 </Auth>
+                <InstallPWA />
                 <BottomNav />
               </WalletProvider>
             </ThemeProvider>
