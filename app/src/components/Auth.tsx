@@ -15,6 +15,8 @@ import {
 } from '@/utils/auth'
 import { toast } from 'sonner'
 import { useWallet } from '@/contexts/WalletContext'
+import { createMnemonic } from '@/utils/wallet'
+import { generateWalletFromMnemonic } from '@/utils/wallet'
 interface AuthProps {
   children: React.ReactNode
 }
@@ -27,7 +29,7 @@ export default function Auth({ children }: AuthProps) {
   const [error, setError] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [hasPassword, setHasPassword] = useState(false)
-  const { walletSolana } = useWallet()
+  const { walletSolana, setWalletSolana } = useWallet()
 
   useEffect(() => {
     if (walletSolana) {
@@ -42,6 +44,14 @@ export default function Auth({ children }: AuthProps) {
           setHasPassword(false)
           setIsAuthenticated(true)
         })
+    }
+    if (!walletSolana) {
+      const mnemonic = createMnemonic()
+      const newWallet = generateWalletFromMnemonic('501', mnemonic, 0)
+
+      if (newWallet) {
+        setWalletSolana(newWallet)
+      }
     }
   }, [walletSolana])
 
