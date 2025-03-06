@@ -13,7 +13,8 @@
 vitest.config.ts..
 src/coverage
 
-
+/public/sw.js
+/public/sw.js.map
 
 # next.js
 /.next/
