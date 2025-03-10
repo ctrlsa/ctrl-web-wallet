@@ -13,10 +13,6 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   let userId: string | null = null
-  try {
-  } catch (error) {
-    console.warn('Telegram SDK not available, wallet will use default storage')
-  }
 
   const walletKey = userId ? `Solana_wallet_${userId}` : 'Solana_wallet'
 
