@@ -123,84 +123,88 @@ export default function Home() {
         </div>
       )}
 
-      {walletSolana && (
-        <div className="space-y-3">
-          {tokenList.map((token) => (
-            <div
-              key={token.symbol}
-              className="border rounded-xl p-4 dark:text-white text-black cursor-pointer"
-              onClick={() => copyToClipboard(walletSolana.publicKey)}
-            >
-              <div className="flex items-center space-x-3">
-                {token.icon}
-                <div className="flex-1">
-                  <div className="flex items-center space-x-4">
-                    <h3 className="font-medium">{token.symbol}</h3>
-                    <span className="bg-secondary rounded-3xl text-[9px] px-1">Solana</span>
+      <div className="max-w-4xl mx-auto w-full">
+        {walletSolana && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tokenList.map((token) => (
+              <div
+                key={token.symbol}
+                className="border rounded-xl p-4 md:p-6 dark:text-white text-black cursor-pointer hover:bg-accent/5 transition-colors"
+                onClick={() => copyToClipboard(walletSolana.publicKey)}
+              >
+                <div className="flex items-start md:items-center space-x-3">
+                  <div className="flex-shrink-0 mt-1 md:mt-0">{token.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2 md:space-x-4">
+                      <h3 className="font-medium text-sm md:text-md">{token.symbol}</h3>
+                      <span className="bg-secondary rounded-3xl text-xs px-2 py-0.5 whitespace-nowrap">
+                        Solana
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 break-all">
+                      {truncateAddress(walletSolana.publicKey)}
+                    </p>
                   </div>
-                  <p className="text-[9px] text-muted-foreground">
-                    {truncateAddress(walletSolana.publicKey)}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="rounded-full bg-current-800"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                    }}
-                  >
-                    <Share2 className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleQrClick(walletSolana.publicKey)
-                    }}
-                  >
-                    <QrCode className="h-5 w-5" />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      copyToClipboard(walletSolana.publicKey)
-                    }}
-                  >
-                    <Copy className="h-5 w-5" />
-                  </Button>
+                  <div className="flex space-x-1 md:space-x-2 ml-auto">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-full hover:bg-accent p-2"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                      }}
+                    >
+                      <Share2 className="h-4 w-4 md:h-5 md:w-5" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="rounded-full hover:bg-accent p-2"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleQrClick(walletSolana.publicKey)
+                      }}
+                    >
+                      <QrCode className="h-4 w-4 md:h-5 md:w-5" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="rounded-full hover:bg-accent p-2"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        copyToClipboard(walletSolana.publicKey)
+                      }}
+                    >
+                      <Copy className="h-4 w-4 md:h-5 md:w-5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      {isQrModalOpen && selectedQrCode && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
-          onClick={closeModal}
-        >
-          <div className=" p-4 rounded-lg">
-            <div className="flex items-center justify-center">
-              <Image
-                src={selectedQrCode}
-                alt="QR Code"
-                width={200}
-                height={200}
-                style={{ maxWidth: '100%', height: 'auto' }}
-              />
+        {isQrModalOpen && selectedQrCode && (
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+            onClick={closeModal}
+          >
+            <div className="bg-background p-6 rounded-lg shadow-lg">
+              <div className="flex items-center justify-center">
+                <Image
+                  src={selectedQrCode}
+                  alt="QR Code"
+                  width={300}
+                  height={300}
+                  style={{ maxWidth: '100%', height: 'auto' }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      <div className="mt-6 space-y-4">{walletSolana && <RedeemEscrow />}</div>
+        )}
+        <div className="mt-8">{walletSolana && <RedeemEscrow />}</div>
+      </div>
     </motion.div>
   )
 }
