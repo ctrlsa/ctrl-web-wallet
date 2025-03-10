@@ -28,16 +28,16 @@ const SendPage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen flex flex-col justify-center p-4"
+      className="min-h-screen flex flex-col justify-center p-2 "
     >
       {walletSolana && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="p-4 w-full flex flex-col justify-center items-center flex-grow"
+          className="w-full flex flex-col justify-center items-center flex-grow"
         >
-          <TokenBalances contacts={[]} defaultToken="SOL" />
+          <TokenBalances defaultToken="SOL" />
         </motion.div>
       )}
     </motion.div>

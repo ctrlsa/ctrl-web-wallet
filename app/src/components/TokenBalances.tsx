@@ -15,16 +15,8 @@ import { tokenList } from '@/utils/tokens'
 import { fetchTokenBalances, Token, initializeEscrow, fetchTokenPrices } from '@/utils/solanaUtils'
 import { cn } from '@/lib/utils'
 import { BN } from '@coral-xyz/anchor'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-
-type Contact = {
-  id: string
-  name: string
-  solanaAddress?: string
-}
 
 type TokenBalancesProps = {
-  contacts: Contact[]
   defaultToken?: string
 }
 
@@ -32,7 +24,7 @@ type TokenWithPrice = Token & {
   usdPrice?: number
 }
 
-export default function TokenBalances({ contacts, defaultToken }: TokenBalancesProps) {
+export default function TokenBalances({ defaultToken }: TokenBalancesProps) {
   const { walletSolana } = useWallet()
   const [connection, setConnection] = useState<Connection | null>(null)
   const [tokens, setTokens] = useState<TokenWithPrice[]>([])
@@ -213,9 +205,9 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             {tokens.length > 0 ? (
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {tokens
                   .filter((token) => ['SOL', 'USDC'].includes(token.symbol))
                   .map((token) => (
@@ -227,25 +219,26 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
                     >
                       <div
                         className={cn(
-                          'flex items-center p-4 rounded-lg border cursor-pointer transition-all',
-                          'hover:border-primary',
-                          selectedToken?.symbol === token.symbol && 'border-2 border-primary'
+                          'flex items-center p-3 sm:p-5 rounded-lg border cursor-pointer transition-all',
+                          'hover:border-primary hover:shadow-md',
+                          selectedToken?.symbol === token.symbol &&
+                            'border-2 border-primary shadow-md'
                         )}
                       >
-                        <div className="flex items-center flex-1 gap-3">
-                          <div className="w-8 h-8">{token.icon}</div>
-                          <div className="flex flex-row space-x-4 justify-center items-center">
-                            <div className="font-medium">{token.symbol}</div>
-                            <span className="flex items-center bg-secondary rounded-3xl text-[9px] px-1">
+                        <div className="flex items-center flex-1 gap-2 sm:gap-4">
+                          <div className="w-7 h-7 sm:w-10 sm:h-10">{token.icon}</div>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                            <div className="font-medium text-sm sm:text-lg">{token.symbol}</div>
+                            <span className="flex items-center bg-secondary rounded-3xl text-[10px] sm:text-xs px-2 py-0.5">
                               Solana
-                            </span>{' '}
+                            </span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">
+                          <div className="font-medium text-sm sm:text-lg">
                             {formatBalance(token.balance || 0, token)}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs sm:text-sm text-muted-foreground">
                             ${((token.balance || 0) * (token.usdPrice || 0)).toFixed(2)}
                           </div>
                         </div>
@@ -258,14 +251,18 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
             )}
 
             {selectedToken && (
-              <div className="space-y-4 pt-6">
+              <div className="space-y-4 sm:space-y-6 pt-6 sm:pt-8">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Send {selectedToken.symbol}</h3>
+                  <h3 className="text-base sm:text-xl font-semibold">
+                    Send {selectedToken.symbol}
+                  </h3>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-4 sm:space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="amount">Amount</Label>
+                    <Label htmlFor="amount" className="text-sm sm:text-lg">
+                      Amount
+                    </Label>
                     <Input
                       id="amount"
                       type="number"
@@ -273,18 +270,19 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
                       onChange={(e) => setSendAmount(e.target.value)}
                       placeholder="Enter amount"
                       disabled={isCreatingEscrow}
+                      className="text-sm sm:text-lg h-11 sm:h-14"
                     />
                   </div>
 
                   <Button
-                    className="w-full py-6 text-lg font-semibold bg-gradient-to-r shadow-lg hover:shadow-xl transition-all duration-300 border-2 "
+                    className="w-full py-4 sm:py-6 text-sm sm:text-lg font-semibold bg-gradient-to-r shadow-lg hover:shadow-xl transition-all duration-300 border-2"
                     onClick={handleSend}
                     disabled={isCreatingEscrow}
                   >
                     {isCreatingEscrow ? (
-                      <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                      <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 animate-spin" />
                     ) : (
-                      <Send className="h-6 w-6 mr-3" />
+                      <Send className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                     )}
                     Send
                   </Button>
@@ -294,8 +292,8 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
 
             {showTempScreen && (
               <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="bg-background p-6 rounded-lg max-w-sm w-full mx-4 space-y-6">
-                  <h3 className="text-lg font-medium text-center">
+                <div className="bg-background p-4 sm:p-8 rounded-lg max-w-[95vw] sm:max-w-md w-full mx-2 sm:mx-6 space-y-4 sm:space-y-8">
+                  <h3 className="text-base sm:text-xl font-medium text-center">
                     {isGeneratingLink ? (
                       <>
                         <br />
@@ -303,13 +301,13 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
                         {selectedToken?.symbol}
                       </>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-4 sm:space-y-6">
                         <br />
                         Forward this link to your friend to transfer {sendAmount}{' '}
                         {selectedToken?.symbol}
                         <br />
                         <div
-                          className="p-3 bg-muted rounded-md break-all text-sm font-mono cursor-pointer"
+                          className="p-3 sm:p-4 bg-muted rounded-md break-all text-sm sm:text-base font-mono cursor-pointer hover:bg-muted/80 transition-colors"
                           onClick={() => {
                             const link = getRedeemLink()
                             navigator.clipboard.writeText(link)
@@ -318,14 +316,14 @@ export default function TokenBalances({ contacts, defaultToken }: TokenBalancesP
                         >
                           {getRedeemLink()}
                         </div>
-                        <p className="text-sm text-muted-foreground text-center">
+                        <p className="text-sm sm:text-base text-muted-foreground text-center">
                           Link will expire in 24 hours
                         </p>
                         <Button
-                          className="w-full py-6 text-lg font-semibold bg-gradient-to-r shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-400/20"
+                          className="w-full py-4 sm:py-6 text-sm sm:text-lg font-semibold bg-gradient-to-r shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-400/20"
                           variant="default"
                         >
-                          <Send className="h-6 w-6 mr-3" />
+                          <Send className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                           Send
                         </Button>
                       </div>
